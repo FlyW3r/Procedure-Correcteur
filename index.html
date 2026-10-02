@@ -7,31 +7,18 @@
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#15120f;
-
-  --surface:#211b16;
-  --surface2:#2b231d;
-
-  --border:rgba(255,255,255,.08);
-  --border2:rgba(255,255,255,.15);
-
-  --accent:#a67c52;
-  --accent2:#8a6744;
-
-  --text:#f5f1eb;
-  --muted:#a49483;
-
-  --danger:#d86a5f;
-  --success:#68b88a;
-
-  --gold:#d4b08a;
+  --bg:#0d0d12;--surface:#13131a;--surface2:#1a1a24;
+  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);
+  --accent:#7b6ef6;--accent2:#5b4fcf;
+  --text:#f0f0f5;--muted:#8888a0;
+  --danger:#f06060;--success:#50c878;--gold:#f5c842;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh}
 .noise{position:fixed;inset:0;pointer-events:none;opacity:.02;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");z-index:0}
 #loginScreen{display:flex;align-items:center;justify-content:center;min-height:100vh;position:relative;z-index:1}
 .login-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:2.5rem;width:min(380px,90vw);text-align:center}
-.login-icon{width:56px;height:56px;background:rgba(155,118,83.15);border:1px solid rgba(166,124,82,.15);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem;font-size:24px}
+.login-icon{width:56px;height:56px;background:rgba(123,110,246,.15);border:1px solid rgba(123,110,246,.3);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem;font-size:24px}
 .login-title{font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:700;margin-bottom:.4rem}
 .login-sub{font-size:13px;color:var(--muted);margin-bottom:2rem}
 .login-input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:11px 14px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;transition:border-color .2s;margin-bottom:12px}
@@ -43,7 +30,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 1.5rem;display:flex;align-items:center;gap:16px;height:56px;position:sticky;top:0;z-index:50}
 .topbar-brand{font-family:'Syne',sans-serif;font-weight:700;font-size:15px;display:flex;align-items:center;gap:8px}
 .brand-dot{width:8px;height:8px;border-radius:50%;background:var(--accent)}
-.role-badge{font-size:11px;padding:3px 10px;border-radius:20px;background:rgba(166,124,82,.15);border:1px solid rgba(166,124,82,.35);color:#d4b08a;font-family:'Syne',sans-serif;font-weight:600;margin-left:4px;}
+.role-badge{font-size:11px;padding:3px 10px;border-radius:20px;background:rgba(123,110,246,.15);border:1px solid rgba(123,110,246,.25);color:var(--accent);font-family:'Syne',sans-serif;font-weight:600;margin-left:4px}
 .main{max-width:960px;margin:0 auto;padding:2rem 1.5rem}
 .stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:2rem}
 .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1rem 1.25rem}
@@ -99,54 +86,56 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .tab-btn.active{color:var(--text)}
 .tab-btn.active::after{content:'';position:absolute;left:0;right:0;bottom:-1px;height:2px;background:var(--accent);border-radius:2px}
 .tab-count{font-size:11px;background:var(--surface2);border:1px solid var(--border2);border-radius:20px;padding:1px 8px;color:var(--muted)}
-.tab-btn.active .tab-count{color:var(--accent);border-color:rgba(123,110,246,.3);background:rgbargba(166,124,82,.1)}
+.tab-btn.active .tab-count{color:var(--accent);border-color:rgba(123,110,246,.3);background:rgba(123,110,246,.1)}
 @media(max-width:600px){.corr-header{flex-direction:column}.score-summary{width:100%}.stats-row{grid-template-columns:1fr 1fr}}
 </style>
 <!-- Firebase SDK -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getDatabase, ref, get, set, query, orderByKey, startAt, endAt } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-<script>
-const SUPABASE_URL =
-'https://hxbjgktsrrpiwvuvzkto.supabase.co';
+  const firebaseConfig = {
+    apiKey: "AIzaSyCxdDLLbMcVVP8OCgiyIZs1-ujz7rkMSsg",
+    authDomain: "procedure2-900aa.firebaseapp.com",
+    databaseURL: "https://procedure2-900aa-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "procedure2-900aa",
+    storageBucket: "procedure2-900aa.firebasestorage.app",
+    messagingSenderId: "1045293722437",
+    appId: "1:1045293722437:web:f978959fbcb198e328ac2c"
+  };
 
-const SUPABASE_KEY =
-'sb_publishable_Spl5ZvM77mhN4ShrsVuGtQ_Mhx65HPx';
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
 
-const supabase =
-window.supabase.createClient(
-SUPABASE_URL,
-SUPABASE_KEY
-);
+  window.storage = {
+    get: async (key) => {
+      try {
+        const snap = await get(ref(db, 'proc2/' + key));
+        if (snap.exists()) return { value: snap.val() };
+        return null;
+      } catch(e) { console.error('Firebase get error', e); return null; }
+    },
+    set: async (key, value) => {
+      try {
+        await set(ref(db, 'proc2/' + key), value);
+        return { value };
+      } catch(e) { console.error('Firebase set error', e); return null; }
+    },
+    list: async (prefix) => {
+      try {
+        const q = query(ref(db, 'proc2'), orderByKey(), startAt(prefix), endAt(prefix + '\uf8ff'));
+        const snap = await get(q);
+        const keys = [], values = {};
+        if (snap.exists()) {
+          snap.forEach(child => { keys.push(child.key); values[child.key] = child.val(); });
+        }
+        return { keys, values };
+      } catch(e) { console.error('Firebase list error', e); return null; }
+    }
+  };
 
-window.storage = {
-
-  async getConfig() {
-    const { data } = await supabase
-      .from('exam_config')
-      .select('*')
-      .limit(1)
-      .single();
-
-    return data;
-  },
-
-  async getQuestions() {
-    const { data } = await supabase
-      .from('questions')
-      .select('*');
-
-    return data || [];
-  },
-
-  async addSubmission(submission) {
-    return await supabase
-      .from('submissions')
-      .insert(submission);
-  }
-
-};
-
-window.dispatchEvent(new Event('firebaseReady'));
+  window._firebaseReady = true;
+  window.dispatchEvent(new Event('firebaseReady'));
 </script>
 </head>
 <body>
@@ -163,7 +152,7 @@ window.dispatchEvent(new Event('firebaseReady'));
 </div>
 <div id="appShell">
   <div class="topbar">
-    <div class="topbar-brand"><span class="brand-dot"></span> Correction Examen Procédure | 408 & 428 <span class="role-badge">Formateur</span></div>
+    <div class="topbar-brand"><span class="brand-dot"></span> Procédure 2 <span class="role-badge">Formateur</span></div>
     <button class="icon-btn" style="margin-left:auto" onclick="loadData()">↻ Actualiser</button>
   </div>
   <div class="main">
@@ -181,7 +170,7 @@ window.dispatchEvent(new Event('firebaseReady'));
 </div>
 <div class="toast" id="toast"></div>
 <script>
-let FORMATEUR_PASSWORD = '408ontop';
+let FORMATEUR_PASSWORD = '064ontop';
 let submissions = [], questions = [], currentSub = null, currentScores = {};
 let config = { pass: 17 };
 let activeTab = 'pending';
